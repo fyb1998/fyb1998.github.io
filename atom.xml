@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://fyb1998.github.io</id>
+    <title>Gridea</title>
+    <updated>2022-11-07T06:00:10.117Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://fyb1998.github.io"/>
+    <link rel="self" href="https://fyb1998.github.io/atom.xml"/>
+    <subtitle>温故而知新</subtitle>
+    <logo>https://fyb1998.github.io/images/avatar.png</logo>
+    <icon>https://fyb1998.github.io/favicon.ico</icon>
+    <rights>All rights reserved 2022, Gridea</rights>
+    <entry>
+        <title type="html"><![CDATA[YOLOv7]]></title>
+        <id>https://fyb1998.github.io/post/yolov7/</id>
+        <link href="https://fyb1998.github.io/post/yolov7/">
+        </link>
+        <updated>2022-11-07T03:37:59.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="摘要">摘要</h1>
+<p>yolov7在5FPS到160FPS的速度和精度上都超过了所有已知的对象检测器。</p>
+<p>yolov7在速度和精确度上优于YOLOR、YOLOX、scale-yolov4、YOLOv5、DETR和许多目标检测器。</p>
+<h1 id="1introduction">1.Introduction</h1>
+<p>实时目标检测在计算机视觉中是一个非常重要的课题，因为它往往是计算机视觉系统中必不可少的组成部分。</p>
+<p>本文提出的实时目标检测器主要是希望它能够同时支持移动GPU和从边缘到云端的GPU设备。</p>
+<p>YOLOX和YOLOR等方法，其重点是提高各种GPU的推理速度。最近，实时目标检测器的发展集中在高效架构的设计上，而能够在CPU上使用的实时对象检测器，其设计多基于MobileNet、ShuffleNet或GhostNet。另一种主流的实时对象检测器是针对于GPU开发的，它们大多使用ResNet、DarkNet或DLA，然后使用CSPNet策略来优化架构。</p>
+<p>本文提出的方法的发展方向不同于目前主流的实时目标检测器，除了体系结构优化，我们提出的方法将专注于训练过程的优化。我们将重点研究一些优化的模块和优化方法，这些优化方法可以在不增加推理成本的前提下，增加训练成本，提高目标检测的准确性。我们将提出的模块和优化方法称为可训练的免费包。</p>
+<p>今年来，模型重参化和动态标签分配已成为网络训练和目标检测中的重要课题。本文将介绍在这些新概念提出后发现的一些新问题，并提出有效的方法来解决它们。在模型重参化方面，利用梯度传播路径的概念，分析了适用于不同网络层的模型重参化策略，提出了规划重参数化模型。此外，我们发现当使用动态标签分配技术，训练具有多个输出层的模型会产生新的问题。那就是：如何为不同的分支的输出分配动态目标。针对这一问题，提出了一种新的标签分配方法，即由粗到细的导向性标签分配方法。</p>
+<p>本文的研究成果如下：1. 设计了几种可训练的免费包方法，使用实时目标检测器在不增加推理成本的前提下，大大提高了检测精度；2. 对于目标检测方法的发展，发现了两个新的问题，即模型重参化的模块如何替换原始模块以及动态标签分配策略如何处理对不同输出层的分配。此外本文还提出了解决这些问题带来的困难的方法；3. 提出了能有效利用参数和计算的扩展和复合缩放实时目标检测器方法；4. 该方法可有效减少现有实时目标检测器 40% 左右的参数和 50% 左右的计算量，具有更快的推理速度和更高的检测精度。</p>
+<h1 id="2related-work">2.Related work</h1>
+<h2 id="21-real-time-object-detectors">2.1 Real-time object detectors</h2>
+<p>目前最先进的实时目标检测器主要基于 YOLO 和 FCOS，能够成为最先进的实时目标检测器通常需要以下特征：1. 更快和更强的网络架构；2.更有效的特征整合方法；3.更精确的检测方法；4.更鲁棒的损失函数；5.更有效的标签分配方法；6.更有效的训练方法。</p>
+<p>本文主要针对4、5、6相关的最先进方法，设计新的可训练的免费包方法。</p>
+<h2 id="22-model-re-parameterization">2.2. Model re-parameterization</h2>
+<p>模型重参化在推理阶段将多个计算模块合并为一个。模型重参化技术可以看作是一种集成技术，我们可以将其分为模块级集成和模型级集成两大类。</p>
+<p>为了获得最终的推理模型，有两种常见的模型级重参化实践。一种是用不同的训练数据训练多个相同的模型，然后对多个训练过的模型进行加权平均。另一种是对不同迭代次数下模型的权重进行加权平均。</p>
+<p>模块级重参数化是近年来比较热门的研究课题。这种方法在训练时将一个模块划分为多个相同或者不同的模块分支，在推理时将多个分支模块集成为一个完全等价的模块。然而，并不是所有提出的重参数化模块都可以完美应用于不同的体系结构。</p>
+<p>考虑到这一点，本文开发了新的重参数化模块，并为各种体系结构设计了相关的应用策略。</p>
+<h2 id="23-model-scaling">2.3 Model scaling</h2>
+<p>模型缩放是一种放大或缩小已经设计好的模型，使其适合不同的计算设备的方法。模型缩放方法通常采用不同的缩放因子，如分辨率(输入图像的大小)、深度(层数)、宽度(通道数)、阶段(特征金字塔数)，以达到在网络参数量、计算量、推理速度和精度方面的良好平衡。网络架构搜索(NAS)是常用的模型扩展方法之一。NAS可以自动从搜索空间中搜索合适的缩放因子，而不需要定义太复杂的规则。NAS的缺点是需要非常昂贵的计算来完成对模型缩放因子的搜索。</p>
+<p>本文观察到，所有基于连接的模型，如DenseNet或VoVNet，当这些模型的深度缩放时，会改变某些层的输入宽度。由于所提出的体系结构是基于串联的，我们必须为该模型设计一种新的复合缩放方法。</p>
+<h1 id="3-architecture">3. Architecture</h1>
+<h2 id="31-extended-efficient-layer-aggregation-networks">3.1. Extended efficient layer aggregation networks</h2>
+<figure data-type="image" tabindex="1"><img src="https://fyb1998.github.io/post-images/1667792396461.png" alt="" loading="lazy"></figure>
+<p>扩展的高效层聚合网络。所提出的扩展ELAN(E-ELAN)完全不改变原架构的梯度传输路径，而是利用群卷积来增加新增特征的基数，并以 shuffle 和 merge 的基数方法将不同组的特征进行组合。这种操作可以增强不同特征映射学到的特征，提高参数和计算使用。</p>
+<p>在大多数关于设计高效架构的文献中，主要的考虑因素仅仅是参数的数量、计算量和计算密度。从内存访问成本的特点出发，Ma等人还分析了输入/输出通道比、体系结构分支的数量和元素智能操作对网络推理速度的影响。Dollár等[15]在进行模型缩放时还考虑了激活，即更多地考虑卷积层输出张量中的元素数量。图1 (b)中CSPV oVNet[79]的设计是VoVNet[39]的变体。除了考虑上述的基本设计问题外，CSPVoVNet[79]的体系结构还分析了梯度路径，以使不同层的权重学习到更多不同的特征。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Hello Gridea]]></title>
+        <id>https://fyb1998.github.io/post/hello-gridea/</id>
+        <link href="https://fyb1998.github.io/post/hello-gridea/">
+        </link>
+        <updated>2018-12-11T16:00:00.000Z</updated>
+        <summary type="html"><![CDATA[<p>👏  欢迎使用 <strong>Gridea</strong> ！<br>
+✍️  <strong>Gridea</strong> 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意... ...</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>👏  欢迎使用 <strong>Gridea</strong> ！<br>
+✍️  <strong>Gridea</strong> 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意... ...</p>
+<!-- more -->
+<p><a href="https://github.com/getgridea/gridea">Github</a><br>
+<a href="https://gridea.dev/">Gridea 主页</a><br>
+<a href="https://fehey.com/">示例网站</a></p>
+<h2 id="特性">特性👇</h2>
+<p>📝  你可以使用最酷的 <strong>Markdown</strong> 语法，进行快速创作</p>
+<p>🌉  你可以给文章配上精美的封面图和在文章任意位置插入图片</p>
+<p>🏷️  你可以对文章进行标签分组</p>
+<p>📋  你可以自定义菜单，甚至可以创建外部链接菜单</p>
+<p>💻  你可以在 <strong>Windows</strong>，<strong>MacOS</strong> 或 <strong>Linux</strong> 设备上使用此客户端</p>
+<p>🌎  你可以使用 <strong>𝖦𝗂𝗍𝗁𝗎𝖻 𝖯𝖺𝗀𝖾𝗌</strong> 或 <strong>Coding Pages</strong> 向世界展示，未来将支持更多平台</p>
+<p>💬  你可以进行简单的配置，接入 <a href="https://github.com/gitalk/gitalk">Gitalk</a> 或 <a href="https://github.com/SukkaW/DisqusJS">DisqusJS</a> 评论系统</p>
+<p>🇬🇧  你可以使用<strong>中文简体</strong>或<strong>英语</strong></p>
+<p>🌁  你可以任意使用应用内默认主题或任意第三方主题，强大的主题自定义能力</p>
+<p>🖥  你可以自定义源文件夹，利用 OneDrive、百度网盘、iCloud、Dropbox 等进行多设备同步</p>
+<p>🌱 当然 <strong>Gridea</strong> 还很年轻，有很多不足，但请相信，它会不停向前 🏃</p>
+<p>未来，它一定会成为你离不开的伙伴</p>
+<p>尽情发挥你的才华吧！</p>
+<p>😘 Enjoy~</p>
+]]></content>
+    </entry>
+</feed>
